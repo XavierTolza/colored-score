@@ -115,8 +115,17 @@ def _has_git_identity(directory: str) -> bool:
     return bool(name.stdout.strip()) and bool(email.stdout.strip())
 
 
-def git_push(directory: str, remote_url: str, branch: str) -> None:
-    """Configure le remote ``origin`` et pousse la branche."""
+def git_push(directory: str, remote_url: str, branch: str,
+             clean_url: Optional[str] = None) -> None:
+    """Configure le remote ``origin`` et pousse la branche.
+
+    Args:
+        directory: dépôt local.
+        remote_url: URL de push (peut contenir le token).
+        branch: branche à pousser.
+        clean_url: URL sans token ; si fournie, on la restaure après le push
+            pour ne jamais laisser le token écrit dans ``.git/config``.
+    """
     existing = _run(["git", "remote"], cwd=directory, check=False).stdout.split()
     if "origin" in existing:
         _run(["git", "remote", "set-url", "origin", remote_url], cwd=directory)
@@ -124,7 +133,12 @@ def git_push(directory: str, remote_url: str, branch: str) -> None:
         _run(["git", "remote", "add", "origin", remote_url], cwd=directory)
 
     print(f"[git] Push vers origin/{branch}...")
-    _run(["git", "push", "-u", "origin", branch], cwd=directory)
+    try:
+        _run(["git", "push", "-u", "origin", branch], cwd=directory)
+    finally:
+        if clean_url:
+            _run(["git", "remote", "set-url", "origin", clean_url],
+                 cwd=directory, check=False)
 
 
 # ---------------------------------------------------------------------------
@@ -133,8 +147,8 @@ def git_push(directory: str, remote_url: str, branch: str) -> None:
 
 
 def create_remote_repo(token: str, repo_name: str, private: bool,
-                       description: str = "") -> str:
-    """Crée le dépôt distant et retourne son URL HTTPS (avec token intégré).
+                       description: str = "") -> tuple:
+    """Crée le dépôt distant et retourne (url_de_push, url_propre).
 
     Args:
         token: Personal Access Token GitHub.
@@ -174,8 +188,10 @@ def create_remote_repo(token: str, repo_name: str, private: bool,
         else:
             raise PublishError(f"Création du dépôt échouée : {exc.data or exc}") from exc
 
-    # URL de push authentifiée (le token n'est pas écrit sur disque).
-    return f"https://{token}@github.com/{login}/{repo_name}.git"
+    clean_url = f"https://github.com/{login}/{repo_name}.git"
+    # URL de push authentifiée (le token n'est pas persisté : cf. git_push).
+    push_url = f"https://{token}@github.com/{login}/{repo_name}.git"
+    return push_url, clean_url
 
 
 # ---------------------------------------------------------------------------
@@ -198,15 +214,13 @@ def publish(directory: str, repo_name: str, token: str, private: bool = False,
         raise PublishError(f"Répertoire introuvable : {directory}")
 
     print(f"[pub] Publication de '{repo_name}' (private={private})...")
-    remote_url = create_remote_repo(token, repo_name, private, description)
+    push_url, clean_url = create_remote_repo(token, repo_name, private, description)
 
     git_init(directory, branch)
     git_commit_all(directory, commit_message)
-    git_push(directory, remote_url, branch)
+    git_push(directory, push_url, branch, clean_url=clean_url)
 
-    # URL « propre » (sans token) pour l'affichage.
-    login = remote_url.split("@github.com/")[1].rsplit("/", 1)[0]
-    html_url = f"https://github.com/{login}/{repo_name}"
+    html_url = clean_url[:-4]  # retire le suffixe ".git"
     print(f"[pub] Terminé -> {html_url}")
     return html_url
 
