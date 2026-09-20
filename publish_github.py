@@ -34,8 +34,9 @@ import sys
 from typing import List, Optional
 
 try:
-    from github import Github, GithubException
+    from github import Auth, Github, GithubException
 except ImportError:  # pragma: no cover - dépend de l'environnement
+    Auth = None  # type: ignore
     Github = None  # type: ignore
     GithubException = Exception  # type: ignore
 
@@ -149,7 +150,7 @@ def create_remote_repo(token: str, repo_name: str, private: bool,
             "PyGithub n'est pas installé. Exécutez : pip install PyGithub"
         )
 
-    client = Github(token)
+    client = Github(auth=Auth.Token(token))
     try:
         user = client.get_user()
         login = user.login
