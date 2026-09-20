@@ -1,0 +1,63 @@
+# =============================================================================
+# .gitignore — Projet Python Colored-Score
+# =============================================================================
+
+# --- Bytecode / cache Python -----------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Environnements virtuels ------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# --- Outils de build / distribution -----------------------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+MANIFEST
+
+# --- Tests & couverture -----------------------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# --- Typage statique / linting ----------------------------------------------
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+.flake8
+
+# --- Éditeurs / IDE ---------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Système ----------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Sorties de l'application -----------------------------------------------
+# Les PDF générés ne sont pas versionnés (reproductibles depuis samples/).
+output/
+*.pdf
+
+# --- Secrets / configuration locale -----------------------------------------
+.env
+.env.*
+*.local.yaml
+
+# --- Divers -----------------------------------------------------------------
+*.log
+.agent_tmp/

@@ -1,0 +1,23 @@
+# =============================================================================
+# Dépendances de Colored-Score
+# -----------------------------------------------------------------------------
+# Versions minimales testées avec Python 3.9+.
+# =============================================================================
+
+# --- Rendu PDF -------------------------------------------------------------
+reportlab>=4.0.0          # moteur graphique et génération PDF
+
+# --- Configuration ---------------------------------------------------------
+PyYAML>=6.0               # lecture du fichier config.yaml
+
+# --- Assets / police musicale ---------------------------------------------
+fonttools>=4.40.0         # conversion OTF -> TTF de la fonte Bravura (tools/)
+
+# --- Publication GitHub ----------------------------------------------------
+PyGithub>=2.0.0           # création de dépôt via l'API GitHub
+
+# --- Tests (optionnel) -----------------------------------------------------
+pytest>=7.0.0
+
+# --- Aperçu PDF -> image (optionnel, pour les tests visuels) ---------------
+pypdfium2>=4.0.0

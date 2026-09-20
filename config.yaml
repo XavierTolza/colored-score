@@ -1,0 +1,107 @@
+# =============================================================================
+# config.yaml — Configuration centrale de Colored-Score
+# -----------------------------------------------------------------------------
+# Toutes les valeurs du rendu PDF sont paramétrables ici : le code ne contient
+# aucune constante graphique "en dur". Modifiez ce fichier pour personnaliser
+# le format de page, les dimensions des portées/notes, les marges, etc.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. Mappage STRICT Notes -> Couleurs du clavier Baby Einstein / Hape
+#    (de gauche à droite : 8 touches, Do4 -> Do5).
+#    - "abc"  : symbole en notation ABC (C, D, E, F, G, A, B, c)
+#    - "order": position physique de la touche sur le clavier (1..8)
+# -----------------------------------------------------------------------------
+notes:
+  C: { name: "Do",  octave: 4, order: 1, color: "#E51937", label_en: "C4" }
+  D: { name: "Ré",  octave: 4, order: 2, color: "#F37023", label_en: "D4" }
+  E: { name: "Mi",  octave: 4, order: 3, color: "#FFD100", label_en: "E4" }
+  F: { name: "Fa",  octave: 4, order: 4, color: "#5BB847", label_en: "F4" }
+  G: { name: "Sol", octave: 4, order: 5, color: "#00AEEF", label_en: "G4" }
+  A: { name: "La",  octave: 4, order: 6, color: "#0054A6", label_en: "A4" }
+  B: { name: "Si",  octave: 4, order: 7, color: "#B552A0", label_en: "B4" }
+  c: { name: "Do",  octave: 5, order: 8, color: "#D81B60", label_en: "C5" }
+
+# -----------------------------------------------------------------------------
+# 2. Couleurs générales du document
+# -----------------------------------------------------------------------------
+colors:
+  staff_lines: "#333333"    # couleur des 5 lignes de la portée
+  note_outline: "#1A1A1A"   # contour (têtes de note)
+  text: "#1A1A1A"           # texte des titres et libellés
+  rhythm: "#000000"         # hampes, crochets, barres de mesure
+  background: "#FFFFFF"     # fond de page
+
+# -----------------------------------------------------------------------------
+# 3. Mise en page (format de page, marges, portée, notes, légende)
+# -----------------------------------------------------------------------------
+layout:
+  page_size: "A4"           # A4, A5, LETTER, LEGAL, A3 ...
+  orientation: "portrait"   # portrait | landscape
+
+  margins:                  # en millimètres
+    top: 20
+    bottom: 20
+    left: 15
+    right: 15
+
+  # --- Titre ---
+  title:
+    font_name: "Helvetica-Bold"
+    font_size: 22
+    spacing_after: 4        # mm sous le titre
+
+  subtitle:
+    font_name: "Helvetica-Oblique"
+    font_size: 10
+    spacing_after: 10       # mm sous le sous-titre
+
+  # --- Portée (staff) ---
+  staff:
+    space: 3.2              # interligne (écart entre 2 lignes) en mm
+    line_width: 0.8         # épaisseur des lignes (pt)
+    system_gap: 20.0        # espace entre deux systèmes/portées (mm)
+    left_padding: 12.0      # espace avant la 1ère note d'un système (mm)
+    right_padding: 6.0      # espace après la dernière note (mm)
+
+  # --- Notes ---
+  notes_style:
+    spacing: 9.0            # espace horizontal entre deux notes (mm)
+    stem_length: 3.4        # longueur de la hampe (en interlignes)
+    stem_width: 0.9         # épaisseur de la hampe (pt)
+    ledger_length: 5.4      # longueur des lignes supplémentaires (mm)
+    show_labels: true       # afficher le nom français (Do, Ré, ...) sous la note
+    label_font_name: "Helvetica-Bold"
+    label_font_size: 8
+    label_offset: 9.0       # décalage vertical du libellé (mm)
+
+  # --- Légende du clavier (mappage notes/couleurs) ---
+  legend:
+    enabled: true
+    title: "Légende du clavier (8 touches)"
+    key_width: 12.0         # largeur d'une touche (mm)
+    key_height: 18.0        # hauteur d'une touche (mm)
+    key_gap: 1.4            # espace entre deux touches (mm)
+    font_size: 8
+    title_font_size: 11
+    spacing_before: 12.0    # espace avant la légende (mm)
+
+# -----------------------------------------------------------------------------
+# 4. Gamme autorisée + politique pour les notes hors gamme
+# -----------------------------------------------------------------------------
+gamut:
+  min_note: "C4"
+  max_note: "C5"
+
+policy:
+  # transpose : replie l'octave / rapproche la touche la plus proche
+  # skip      : ignore la note (silence)
+  # error     : lève une exception explicite
+  out_of_range: "transpose"
+
+# -----------------------------------------------------------------------------
+# 5. Sortie
+# -----------------------------------------------------------------------------
+output:
+  directory: "output"
+  filename_pattern: "{title_slug}.pdf"
